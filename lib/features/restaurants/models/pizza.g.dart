@@ -11,7 +11,7 @@ Pizza _$PizzaFromJson(Map<String, dynamic> json) => Pizza(
   name: json['name'] as String,
   description: json['description'] as String,
   allergens: (json['allergens'] as List<dynamic>)
-      .map((e) => (e as num).toInt())
+      .map((e) => e as String)
       .toList(),
 );
 

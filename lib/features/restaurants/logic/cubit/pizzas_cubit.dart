@@ -16,6 +16,7 @@ class PizzasCubit extends Cubit<PizzasState> {
     } on GearPizzaAppException catch (e) {
       emit(PizzasError(e.message));
     } catch (e) {
+      print(e.toString());
       emit(PizzasError('Errore inatteso: $e'));
     }
   }

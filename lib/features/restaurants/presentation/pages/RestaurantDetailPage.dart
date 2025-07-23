@@ -2,11 +2,15 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gearpizza/core/di/injection.dart';
+import 'package:gearpizza/core/network/gearpizza_directus_api_service.dart';
 import 'package:gearpizza/core/storage/token_storage.dart';
+import 'package:gearpizza/features/restaurants/logic/cubit/allergens_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/pizzas_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/pizzas_state.dart';
 import 'package:gearpizza/features/restaurants/models/pizza.dart';
 import 'package:gearpizza/features/restaurants/models/restaurant.dart';
+import 'package:gearpizza/features/restaurants/presentation/widgets/allergen_bottom_sheet.dart';
 import 'package:gearpizza/features/restaurants/presentation/widgets/pizza_card.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,6 +26,7 @@ class RestaurantDetailPage extends StatefulWidget {
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   final ScrollController _scrollController = ScrollController();
   bool showHiddenWidget = true;
+  List<int> selectedAllergensForFilter = [];
 
   @override
   void initState() {
@@ -94,8 +99,39 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         ),
                         child: IconButton(
                           icon: Icon(Icons.no_food, color: Colors.black),
-                          onPressed: () {
-                            // futura gestione allergeni
+                          onPressed: () async {
+                            final result =
+                                await showModalBottomSheet<List<int>>(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(20),
+                                    ),
+                                  ),
+                                  builder: (_) => BlocProvider(
+                                    create: (_) => AllergensCubit(
+                                      sl<GearPizzaDirectusApiService>(),
+                                    ),
+                                    child: AllergenBottomSheet(
+                                      initialSelectedIds:
+                                          selectedAllergensForFilter,
+                                    ),
+                                  ),
+                                );
+
+                            if (result != null) {
+                              selectedAllergensForFilter = result;
+                              print(
+                                "selectedAllergensForFilter: " +
+                                    selectedAllergensForFilter.toString(),
+                              );
+                              context.read<PizzasCubit>().fetchPizzas(
+                                widget.restaurant.id,
+                                selectedAllergensForFilter,
+                              );
+                            }
                           },
                         ),
                       ),
@@ -115,9 +151,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                                 Icons.shopping_cart_outlined,
                                 color: Colors.black,
                               ),
-                              onPressed: () {
-                                // futura gestione carrello
-                              },
+                              onPressed: () => {},
                             ),
                           ),
                           Positioned(
@@ -231,6 +265,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   child: Center(child: CircularProgressIndicator()),
                 );
               } else if (state is PizzasLoaded) {
+                print("pizzassssssss: " + state.pizzas.toString());
                 final pizzas = state.pizzas;
                 if (pizzas.isEmpty) {
                   return const SliverToBoxAdapter(

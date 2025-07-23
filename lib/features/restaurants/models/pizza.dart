@@ -7,7 +7,7 @@ class Pizza {
   final int id;
   final String name;
   final String description;
-  final List<int> allergens;
+  final List<String> allergens;
 
   // coverImageId estratto da cover_image.id
   @JsonKey(ignore: true)
@@ -31,12 +31,11 @@ class Pizza {
       description: json['description'] as String,
       allergens:
           (json['allergens'] as List<dynamic>?)
-              ?.map((e) => e as int)
+              ?.map((a) => a['allergens_id']?['name'] as String?)
+              .whereType<String>() // rimuove i null
               .toList() ??
           [],
-      coverImageId: json['cover_image'] != null
-          ? json['cover_image']['id'] as String?
-          : null,
+      coverImageId: json['cover_image']?['id'] as String?,
     );
   }
 

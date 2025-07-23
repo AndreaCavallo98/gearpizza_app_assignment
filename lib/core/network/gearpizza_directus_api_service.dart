@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:gearpizza/core/error/gearpizza_app_exception.dart';
 import 'package:gearpizza/core/network/dio_client.dart';
+import 'package:gearpizza/features/restaurants/models/allergen.dart';
 import 'package:gearpizza/features/restaurants/models/pizza.dart';
 import 'package:gearpizza/features/restaurants/models/restaurant.dart';
 
@@ -25,7 +25,13 @@ class GearPizzaDirectusApiService {
     if (allergens.isNotEmpty) {
       filter["_or"] = [
         {
-          "allergens": {"_nin": allergens},
+          "allergens": {
+            "_none": {
+              "allergens_id": {
+                "id": {"_in": allergens},
+              },
+            },
+          },
         },
         {
           "allergens": {"_null": true},
@@ -36,12 +42,23 @@ class GearPizzaDirectusApiService {
     final response = await _dio.get(
       '/items/pizzas',
       queryParameters: {
-        'fields': 'id,name,description,allergens,cover_image.id',
+        'fields':
+            'id,name,description,allergens.allergens_id.name,cover_image.id',
         'filter': filter,
       },
     );
 
     final data = response.data['data'] as List;
     return data.map((json) => Pizza.fromJson(json)).toList();
+  }
+
+  Future<List<Allergen>> getAllergens() async {
+    final response = await _dio.get(
+      '/items/allergens',
+      queryParameters: {'fields': 'id,name'},
+    );
+
+    final data = response.data['data'] as List;
+    return data.map((json) => Allergen.fromJson(json)).toList();
   }
 }

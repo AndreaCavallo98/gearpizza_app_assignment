@@ -24,7 +24,6 @@ class DioInterceptor extends Interceptor {
       print('❌ Access token is null');
       accessToken = dotenv.env['GUEST_ACCESS_TOKEN'] ?? '';
     }
-    print('❌ Access token: $accessToken');
 
     if (accessToken.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $accessToken';
