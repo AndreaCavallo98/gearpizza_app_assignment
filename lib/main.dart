@@ -1,16 +1,32 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:gearpizza/core/di/injection.dart';
 import 'package:gearpizza/core/storage/token_storage.dart';
+import 'package:gearpizza/features/cart/logic/cubit/cart_cubit.dart';
 import 'package:gearpizza/router/app_router.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env"); // Carica variabili ambiente (.env)
-  await TokenStorage.initialize(); // Carica i token, o da .env o da SharedPreferences
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  await TokenStorage.initialize();
 
-  setupDependencies(); // Inizializza la DI (Dependency Injection)
-  runApp(const MyApp());
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: kIsWeb
+        ? HydratedStorageDirectory.web
+        : HydratedStorageDirectory((await getTemporaryDirectory()).path),
+  );
+  print('🟢 HydratedBloc storage initialized');
+
+  setupDependencies();
+
+  runApp(BlocProvider(create: (_) => CartCubit(), child: const MyApp()));
 }
 
 // Funzione che inizializza i token, caricandoli da SharedPreferences o da .env

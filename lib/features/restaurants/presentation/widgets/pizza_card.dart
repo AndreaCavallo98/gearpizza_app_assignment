@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gearpizza/core/storage/token_storage.dart';
+import 'package:gearpizza/features/cart/logic/cubit/cart_cubit.dart';
 import 'package:gearpizza/features/restaurants/models/pizza.dart';
 
 class PizzaCard extends StatelessWidget {
@@ -12,45 +14,96 @@ class PizzaCard extends StatelessWidget {
       onTap: () {
         showModalBottomSheet(
           context: context,
-          shape: RoundedRectangleBorder(
+          backgroundColor: const Color(0xFFF5F5F5),
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           builder: (context) {
             final hasAllergens = pizza.allergens.isNotEmpty;
             return Padding(
-              padding: const EdgeInsets.fromLTRB(30, 20, 30, 70),
+              padding: const EdgeInsets.fromLTRB(25, 20, 25, 30),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
                   Text(
                     'Allergeni di "${pizza.name}"',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 16),
                   if (hasAllergens)
-                    ...pizza.allergens.map(
-                      (a) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.warning_amber, color: Colors.orange),
-                            const SizedBox(width: 10),
-                            Text(a, style: TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                      ),
+                    Column(
+                      children: pizza.allergens
+                          .map(
+                            (a) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 12,
+                              ),
+                              margin: const EdgeInsets.only(bottom: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.orange.shade100,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.warning_amber_rounded,
+                                    color: Colors.orange,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      a,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                          .toList(),
                     )
                   else
-                    Row(
-                      children: [
-                        Icon(Icons.check_circle, color: Colors.green),
-                        const SizedBox(width: 10),
-                        Text(
-                          "Questa pizza non contiene allergeni",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14,
+                        horizontal: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.check_circle, color: Colors.green),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              "Questa pizza non contiene allergeni",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                 ],
               ),
@@ -109,7 +162,13 @@ class PizzaCard extends StatelessWidget {
                   size: 25,
                 ),
                 onPressed: () {
-                  // Azione per aggiungere al carrello
+                  context.read<CartCubit>().addToCart(pizza);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("${pizza.name} aggiunta al carrello"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
                 },
               ),
             ),

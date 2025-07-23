@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gearpizza/features/cart/logic/cubit/cart_cubit.dart';
+import 'package:gearpizza/features/cart/logic/cubit/cart_state.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/restaurants_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/restaurants_state.dart';
 import 'package:gearpizza/features/restaurants/presentation/widgets/restaurant_card.dart';
+import 'package:go_router/go_router.dart';
 
 class RestaurantPage extends StatefulWidget {
   const RestaurantPage({super.key, required this.title});
@@ -67,44 +70,51 @@ class _RestaurantPageState extends State<RestaurantPage> {
                       ],
                     ),
                   ),
-                  Stack(
-                    clipBehavior: Clip.none,
-                    alignment: AlignmentDirectional.topCenter,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          Icons.shopping_cart_outlined,
-                          color: Colors.black45,
-                          size: 25,
-                        ),
-                      ),
-                      Positioned(
-                        right: -5,
-                        top: -8,
-                        child: GestureDetector(
-                          child: Container(
-                            padding: EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              color: Color(0xfff95f60),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(
-                              "4",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
+
+                  BlocBuilder<CartCubit, CartState>(
+                    builder: (context, state) {
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        alignment: AlignmentDirectional.topCenter,
+                        children: [
+                          GestureDetector(
+                            onTap: () => context.push('/cart'),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 10),
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black12),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                Icons.shopping_cart_outlined,
+                                color: Colors.black45,
+                                size: 25,
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
+                          if (state.totalItems > 0)
+                            Positioned(
+                              right: -5,
+                              top: -1,
+                              child: Container(
+                                padding: EdgeInsets.all(7),
+                                decoration: BoxDecoration(
+                                  color: Color(0xfff95f60),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  state.totalItems.toString(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),

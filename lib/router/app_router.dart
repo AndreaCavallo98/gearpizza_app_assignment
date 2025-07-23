@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gearpizza/core/di/injection.dart';
 import 'package:gearpizza/core/network/gearpizza_directus_api_service.dart';
 import 'package:gearpizza/core/widgets/bottom_nav_with_animated_icons.dart';
+import 'package:gearpizza/features/cart/presentation/pages/CartPage.dart';
+import 'package:gearpizza/features/cart/presentation/pages/CheckOutPage.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/pizzas_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/restaurants_cubit.dart';
 import 'package:gearpizza/features/restaurants/models/restaurant.dart';
@@ -46,6 +48,20 @@ final GoRouter appRouter = GoRouter(
           create: (_) => PizzasCubit(sl<GearPizzaDirectusApiService>()),
           child: RestaurantDetailPage(restaurant: restaurant),
         );
+      },
+    ),
+    GoRoute(
+      path: '/cart',
+      name: 'cart',
+      builder: (context, state) {
+        return Cartpage();
+      },
+    ),
+    GoRoute(
+      path: '/checkout',
+      name: 'checkout',
+      builder: (context, state) {
+        return Checkoutpage();
       },
     ),
   ],

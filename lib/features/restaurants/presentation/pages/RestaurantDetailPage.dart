@@ -1,10 +1,14 @@
+import 'dart:math';
 import 'dart:ui';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gearpizza/core/di/injection.dart';
 import 'package:gearpizza/core/network/gearpizza_directus_api_service.dart';
 import 'package:gearpizza/core/storage/token_storage.dart';
+import 'package:gearpizza/features/cart/logic/cubit/cart_cubit.dart';
+import 'package:gearpizza/features/cart/logic/cubit/cart_state.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/allergens_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/pizzas_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/pizzas_state.dart';
@@ -61,7 +65,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               children: [
                 Positioned.fill(
                   child: Image.network(
-                    'https://gearpizza.revod.services/assets/10205b8c-33ae-4c42-9f77-9f25b811e787?access_token=${TokenStorage.accessToken}',
+                    //'https://gearpizza.revod.services/assets/10205b8c-33ae-4c42-9f77-9f25b811e787?access_token=${TokenStorage.accessToken}',
+                    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/a5/9a/e0/getlstd-property-photo.jpg?w=500&h=-1&s=1",
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -135,46 +140,51 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                           },
                         ),
                       ),
-                      Stack(
-                        clipBehavior: Clip.none,
-                        alignment: AlignmentDirectional.topCenter,
-                        children: [
-                          Container(
-                            width: 51,
-                            height: 51,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(18),
-                              color: Colors.white,
-                            ),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.shopping_cart_outlined,
-                                color: Colors.black,
-                              ),
-                              onPressed: () => {},
-                            ),
-                          ),
-                          Positioned(
-                            right: -5,
-                            top: -8,
-                            child: GestureDetector(
-                              child: Container(
-                                padding: EdgeInsets.all(7),
+                      BlocBuilder<CartCubit, CartState>(
+                        builder: (context, state) {
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            alignment: AlignmentDirectional.topCenter,
+                            children: [
+                              Container(
+                                width: 51,
+                                height: 51,
                                 decoration: BoxDecoration(
-                                  color: Color(0xfff95f60),
-                                  shape: BoxShape.circle,
+                                  borderRadius: BorderRadius.circular(18),
+                                  color: Colors.white,
                                 ),
-                                child: Text(
-                                  "4",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.shopping_cart_outlined,
+                                    color: Colors.black,
+                                  ),
+                                  onPressed: () => context.push('/cart'),
+                                ),
+                              ),
+                              if (state.totalItems > 0)
+                                Positioned(
+                                  right: -5,
+                                  top: -8,
+                                  child: GestureDetector(
+                                    child: Container(
+                                      padding: EdgeInsets.all(7),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xfff95f60),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Text(
+                                        state.totalItems.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        ],
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -238,7 +248,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         "20 min",
                         style: TextStyle(color: Colors.grey, fontSize: 16),
                       ),
-                      Spacer(),
+
                       Icon(Icons.location_on_outlined, color: Colors.grey),
                       SizedBox(width: 5),
                       Text(
@@ -254,9 +264,12 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           BlocConsumer<PizzasCubit, PizzasState>(
             listener: (context, state) {
               if (state is PizzasError) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.message)));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                  ),
+                );
               }
             },
             builder: (context, state) {
@@ -265,7 +278,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   child: Center(child: CircularProgressIndicator()),
                 );
               } else if (state is PizzasLoaded) {
-                print("pizzassssssss: " + state.pizzas.toString());
                 final pizzas = state.pizzas;
                 if (pizzas.isEmpty) {
                   return const SliverToBoxAdapter(
@@ -274,7 +286,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 }
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => PizzaCard(pizza: pizzas[index]),
+                    (context, index) => FadeInUp(
+                      delay: Duration(milliseconds: 200 + index * 300),
+                      duration: const Duration(milliseconds: 1000),
+                      curve: Curves.easeOutExpo,
+                      child: PizzaCard(pizza: pizzas[index]),
+                    ),
+
                     childCount: pizzas.length,
                   ),
                 );
@@ -283,20 +301,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               }
             },
           ),
-          /*SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              return PizzaCard(
-                pizza: Pizza(
-                  id: 1,
-                  name: "Vesuvio",
-                  description:
-                      "asdlkmaskdmsaklmdklassmadsklamdklasmlkamlkdkams",
-                  allergens: [],
-                  coverImageId: "067e41dd-1b60-4b04-a601-11090118fd2a",
-                ),
-              );
-            }),
-          ),*/
         ],
       ),
     );

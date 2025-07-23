@@ -1,16 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'pizza.g.dart';
-
-@JsonSerializable(explicitToJson: true)
 class Pizza {
   final int id;
   final String name;
   final String description;
   final List<String> allergens;
-
-  // coverImageId estratto da cover_image.id
-  @JsonKey(ignore: true)
   final String? coverImageId;
 
   Pizza({
@@ -32,7 +24,7 @@ class Pizza {
       allergens:
           (json['allergens'] as List<dynamic>?)
               ?.map((a) => a['allergens_id']?['name'] as String?)
-              .whereType<String>() // rimuove i null
+              .whereType<String>() // filtra eventuali null
               .toList() ??
           [],
       coverImageId: json['cover_image']?['id'] as String?,
