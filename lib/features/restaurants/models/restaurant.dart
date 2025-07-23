@@ -4,7 +4,7 @@ part 'restaurant.g.dart';
 
 @JsonSerializable()
 class Restaurant {
-  final String id;
+  final int id;
   final String name;
 
   @JsonKey(name: 'cover_image')
@@ -19,7 +19,8 @@ class Restaurant {
     required this.pizzas,
   });
 
-  String get coverImageUrl => 'https://gearpizza.revod.services/assets/$coverImageId';
+  String get coverImageUrl =>
+      'https://gearpizza.revod.services/assets/$coverImageId';
   int get totalPizzas => pizzas.length;
 
   factory Restaurant.fromJson(Map<String, dynamic> json) =>

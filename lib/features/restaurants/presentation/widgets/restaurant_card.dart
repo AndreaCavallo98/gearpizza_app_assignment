@@ -1,8 +1,14 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:gearpizza/core/storage/token_storage.dart';
+import 'package:gearpizza/features/restaurants/models/restaurant.dart';
+import 'package:go_router/go_router.dart';
 
 class RestaurantCard extends StatelessWidget {
-  const RestaurantCard({super.key});
+  final Restaurant restaurant;
+  const RestaurantCard({super.key, required this.restaurant});
 
   @override
   Widget build(BuildContext context) {
@@ -23,27 +29,64 @@ class RestaurantCard extends StatelessWidget {
                 child: ClipPath(
                   clipper: CustomCardClipper(),
                   child: Image.network(
-                    "https://gearpizza.revod.services/assets/10205b8c-33ae-4c42-9f77-9f25b811e787?access_token=${dotenv.env['GUEST_ACCESS_TOKEN']}",
+                    "https://gearpizza.revod.services/assets/10205b8c-33ae-4c42-9f77-9f25b811e787?access_token=${TokenStorage.accessToken}",
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               Positioned(
-                bottom: 0,
-                right: 0,
-                child: CircleAvatar(
-                  radius: 32,
-                  backgroundColor: Colors.black,
-                  child: Icon(Icons.arrow_forward_ios, color: Colors.white),
+                bottom: 5,
+                right: 3,
+                child: InkWell(
+                  onTap: () {
+                    context.push(
+                      '/restaurant/${restaurant.id}',
+                      extra: restaurant,
+                    );
+                  },
+                  child: CircleAvatar(
+                    radius: 32,
+                    backgroundColor: Colors.black,
+                    child: Icon(Icons.arrow_forward_ios, color: Colors.white),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 30,
+                left: 20,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFF101F22).withAlpha(80),
+                      ),
+                      child: Text(
+                        "${restaurant.totalPizzas} tipi di pizze",
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
         Text(
-          "Pizza Napoletana",
+          restaurant.name,
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
+        SizedBox(height: 5),
         Row(
           children: [
             // 5 stelle fai un ciclo for
@@ -57,7 +100,7 @@ class RestaurantCard extends StatelessWidget {
             Text("10 km", style: TextStyle(color: Colors.grey, fontSize: 16)),
           ],
         ),
-        SizedBox(height: 30),
+        SizedBox(height: 10),
       ],
     );
   }

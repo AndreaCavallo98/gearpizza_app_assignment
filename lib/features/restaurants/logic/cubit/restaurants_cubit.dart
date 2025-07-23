@@ -6,16 +6,27 @@ import 'package:gearpizza/features/restaurants/logic/cubit/restaurants_state.dar
 class RestaurantsCubit extends Cubit<RestaurantsState> {
   final GearPizzaDirectusApiService service;
 
-  RestaurantsCubit(this.service) : super(RestaurantsInitial());
+  RestaurantsCubit(this.service) : super(RestaurantsInitial()) {
+    print('[Cubit] RestaurantsCubit constructor called');
+    fetchRestaurants(); // ✅ chiamata diretta all'inizio
+  }
 
   Future<void> fetchRestaurants() async {
+    print('[Cubit] fetchRestaurants called'); // ✅
     emit(RestaurantsLoading());
     try {
       final items = await service.getRestaurants();
+      //items.add(items[0]);
+      //items.add(items[0]);
+      //items.add(items[0]);
+      print('[Cubit] items: $items'); // 👈 AGGIUNGI QUESTA
       emit(RestaurantsLoaded(items));
     } on GearPizzaAppException catch (e) {
+      print('[Cubit] AppException: ${e.message}');
       emit(RestaurantsError(e.message));
-    } catch (e) {
+    } catch (e, s) {
+      print('[Cubit] Unexpected error: $e');
+      print('[Cubit] STACKTRACE: $s'); // 👈 AGGIUNGI QUESTA
       emit(RestaurantsError('Errore inatteso: $e'));
     }
   }

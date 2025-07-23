@@ -7,7 +7,7 @@ part of 'restaurant.dart';
 // **************************************************************************
 
 Restaurant _$RestaurantFromJson(Map<String, dynamic> json) => Restaurant(
-  id: json['id'] as String,
+  id: (json['id'] as num).toInt(),
   name: json['name'] as String,
   coverImageId: json['cover_image'] as String?,
   pizzas: (json['pizzas'] as List<dynamic>)

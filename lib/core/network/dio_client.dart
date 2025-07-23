@@ -9,12 +9,14 @@ class DioClient {
   late final Dio dio;
 
   DioClient._internal() {
-    dio = Dio(BaseOptions(
-      baseUrl: dotenv.env['BASE_URL'] ?? '',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      contentType: 'application/json',
-    ));
+    dio = Dio(
+      BaseOptions(
+        baseUrl: dotenv.env['API_BASE_URL'] ?? '',
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+        contentType: 'application/json',
+      ),
+    );
 
     dio.interceptors.add(DioInterceptor(dio));
   }
