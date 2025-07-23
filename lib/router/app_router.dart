@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gearpizza/core/di/injection.dart';
 import 'package:gearpizza/core/network/gearpizza_directus_api_service.dart';
 import 'package:gearpizza/core/widgets/bottom_nav_with_animated_icons.dart';
+import 'package:gearpizza/features/restaurants/logic/cubit/pizzas_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/restaurants_cubit.dart';
 import 'package:gearpizza/features/restaurants/models/restaurant.dart';
 import 'package:gearpizza/features/restaurants/presentation/pages/OrdersPage.dart';
@@ -41,7 +42,10 @@ final GoRouter appRouter = GoRouter(
       name: 'restaurantDetail',
       builder: (context, state) {
         final restaurant = state.extra as Restaurant;
-        return RestaurantDetailPage(restaurant: restaurant);
+        return BlocProvider(
+          create: (_) => PizzasCubit(sl<GearPizzaDirectusApiService>()),
+          child: RestaurantDetailPage(restaurant: restaurant),
+        );
       },
     ),
   ],

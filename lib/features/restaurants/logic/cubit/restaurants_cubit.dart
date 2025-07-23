@@ -16,7 +16,7 @@ class RestaurantsCubit extends Cubit<RestaurantsState> {
     emit(RestaurantsLoading());
     try {
       final items = await service.getRestaurants();
-      //items.add(items[0]);
+      items.add(items[0]);
       //items.add(items[0]);
       //items.add(items[0]);
       print('[Cubit] items: $items'); // 👈 AGGIUNGI QUESTA

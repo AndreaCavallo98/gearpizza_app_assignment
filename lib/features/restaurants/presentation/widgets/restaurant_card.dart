@@ -29,7 +29,7 @@ class RestaurantCard extends StatelessWidget {
                 child: ClipPath(
                   clipper: CustomCardClipper(),
                   child: Image.network(
-                    "https://gearpizza.revod.services/assets/10205b8c-33ae-4c42-9f77-9f25b811e787?access_token=${TokenStorage.accessToken}",
+                    "${restaurant.coverImageUrl}?access_token=${TokenStorage.accessToken}",
                     fit: BoxFit.cover,
                   ),
                 ),
