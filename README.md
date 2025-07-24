@@ -20,3 +20,7 @@ Todo:
 - Controllare se cambiano ristorante e ho gia elementi di un altro nel carrello i bottoni per aggiungere nel carrello spariscono
 - Fix creazione ordini con pizze allegate
 - Admin
+
+## Come fare partitre l'app
+
+- Creare un file .env ed inserire le chiavi (API_BASE_URL, GUEST_ACCESS_TOKEN, GUEST_REFRESH_TOKEN, GOOGLE_API_KEY)
