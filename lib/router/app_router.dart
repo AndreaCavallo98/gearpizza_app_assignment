@@ -7,6 +7,7 @@ import 'package:gearpizza/features/cart/logic/cubit/cart_cubit.dart';
 import 'package:gearpizza/features/cart/logic/cubit/customer_form_cubit.dart';
 import 'package:gearpizza/features/cart/presentation/pages/CartPage.dart';
 import 'package:gearpizza/features/cart/presentation/pages/CheckOutPage.dart';
+import 'package:gearpizza/features/on_boarding/presentation/pages/onboard_page.dart';
 import 'package:gearpizza/features/orders/logic/orders_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/pizzas_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/restaurants_cubit.dart';
@@ -18,7 +19,7 @@ import 'package:gearpizza/main.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/restaurants',
+  initialLocation: '/on_boarding',
   routes: [
     ShellRoute(
       builder: (context, state, child) =>
@@ -41,6 +42,13 @@ final GoRouter appRouter = GoRouter(
           ),
         ),
       ],
+    ),
+    GoRoute(
+      path: '/on_boarding',
+      name: 'onBoarding',
+      builder: (context, state) {
+        return AppOnBoardPage();
+      },
     ),
     GoRoute(
       path: '/restaurant/:id',

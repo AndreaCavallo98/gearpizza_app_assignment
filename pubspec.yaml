@@ -82,6 +82,9 @@ flutter:
     - assets/animations/preparing.json
     - assets/animations/delivered.json
     - assets/animations/completed.json
+    - assets/images/pizza.png
+    - assets/images/logo.png
+    - assets/images/rider.png
     - .env
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
