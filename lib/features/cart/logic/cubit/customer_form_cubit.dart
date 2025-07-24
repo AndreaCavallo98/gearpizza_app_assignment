@@ -37,6 +37,7 @@ class CustomerFormCubit extends Cubit<CustomerFormState> {
           customerAlreadyExists: result['customerAlreadyExists'],
         ),
       );
+      cartCubit.clearCart();
     } on DioException catch (e) {
       print('❌ DioError details: ${e.response?.data}');
       if (e.response?.statusCode == 400 && e.response?.data['errors'] != null) {
