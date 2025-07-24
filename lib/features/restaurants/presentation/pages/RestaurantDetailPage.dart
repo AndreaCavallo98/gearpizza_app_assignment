@@ -290,7 +290,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       delay: Duration(milliseconds: 200 + index * 300),
                       duration: const Duration(milliseconds: 1000),
                       curve: Curves.easeOutExpo,
-                      child: PizzaCard(pizza: pizzas[index]),
+                      child: PizzaCard(
+                        pizza: pizzas[index],
+                        restaurantId: widget.restaurant.id,
+                      ),
                     ),
 
                     childCount: pizzas.length,

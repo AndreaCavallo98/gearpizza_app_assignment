@@ -7,21 +7,25 @@ import 'package:gearpizza/features/restaurants/models/pizza.dart';
 class CartCubit extends HydratedCubit<CartState> {
   CartCubit() : super(const CartState());
 
-  void addToCart(Pizza pizza) {
+  void addToCart(Pizza pizza, int? restaurantId) {
+    // Se il carrello ha un ristorante diverso, non aggiungere nulla
+    if (state.restaurantId != null && state.restaurantId != restaurantId) {
+      return;
+    }
+
     final index = state.items.indexWhere((item) => item.pizza.id == pizza.id);
 
     if (index == -1) {
-      // Non esiste ancora, aggiungilo con quantità 1
       emit(
         state.copyWith(
           items: [
             ...state.items,
             CartItem(pizza: pizza, quantity: 1),
           ],
+          restaurantId: state.restaurantId ?? restaurantId,
         ),
       );
     } else {
-      // Esiste già, incrementa la quantità
       final updatedItems = List<CartItem>.from(state.items);
       final existing = updatedItems[index];
       updatedItems[index] = CartItem(

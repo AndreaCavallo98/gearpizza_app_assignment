@@ -130,7 +130,10 @@ class CartItemCard extends StatelessWidget {
                         const SizedBox(width: 10),
                         GestureDetector(
                           onTap: () {
-                            context.read<CartCubit>().addToCart(cartItem.pizza);
+                            context.read<CartCubit>().addToCart(
+                              cartItem.pizza,
+                              context.read<CartCubit>().state.restaurantId,
+                            );
                           },
                           child: Container(
                             width: 25,

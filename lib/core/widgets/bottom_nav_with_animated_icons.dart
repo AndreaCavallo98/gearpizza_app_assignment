@@ -18,15 +18,21 @@ class _BottomNavWithAnimatedIconsState
     extends State<BottomNavWithAnimatedIcons> {
   List<SMIBool> riveIconinputs = [];
   List<StateMachineController?> controllers = [];
-  int selectedNavIndex = 0;
 
   final List<String> routes = ['/restaurants', '/orders'];
 
+  int getSelectedIndexFromRoute(String location) {
+    if (location.startsWith('/orders')) return 1;
+    return 0;
+  }
+
   void animateTheIcon(int index) {
-    riveIconinputs[index].change(true);
-    Future.delayed(Duration(seconds: 1), () {
-      riveIconinputs[index].change(false);
-    });
+    if (riveIconinputs.length > index) {
+      riveIconinputs[index].change(true);
+      Future.delayed(const Duration(seconds: 1), () {
+        riveIconinputs[index].change(false);
+      });
+    }
   }
 
   void riveIconInit(Artboard artboard, {required String stateMachineName}) {
@@ -64,6 +70,9 @@ class _BottomNavWithAnimatedIconsState
 
   @override
   Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).uri.toString();
+    final currentIndex = getSelectedIndexFromRoute(location);
+
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: SafeArea(
@@ -85,21 +94,22 @@ class _BottomNavWithAnimatedIconsState
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(bottomNavItems.length, (index) {
               final riveIcon = bottomNavItems[index].rive;
+              final isActive = index == currentIndex;
+
               return GestureDetector(
                 onTap: () {
                   context.go(routes[index]);
                   animateTheIcon(index);
-                  setState(() => selectedNavIndex = index);
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    AnimatedBar(isActive: index == selectedNavIndex),
+                    AnimatedBar(isActive: isActive),
                     SizedBox(
                       height: 36,
                       width: 36,
                       child: Opacity(
-                        opacity: index == selectedNavIndex ? 1 : 0.5,
+                        opacity: isActive ? 1 : 0.5,
                         child: RiveAnimation.asset(
                           riveIcon.src,
                           artboard: riveIcon.artboard,
@@ -131,11 +141,11 @@ class AnimatedBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      margin: EdgeInsets.only(bottom: 2),
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.only(bottom: 2),
       height: 4,
       width: isActive ? 20 : 0,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Color(0xfff95f60),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),

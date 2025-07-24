@@ -6,10 +6,16 @@ import 'package:gearpizza/features/restaurants/models/pizza.dart';
 
 class PizzaCard extends StatelessWidget {
   final Pizza pizza;
-  const PizzaCard({super.key, required this.pizza});
+  final int restaurantId;
+
+  const PizzaCard({super.key, required this.pizza, required this.restaurantId});
 
   @override
   Widget build(BuildContext context) {
+    final cartCubit = context.watch<CartCubit>();
+    final cartRestaurantId = cartCubit.state.restaurantId;
+    final canAdd = cartRestaurantId == null || cartRestaurantId == restaurantId;
+
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
@@ -121,14 +127,14 @@ class PizzaCard extends StatelessWidget {
               height: 100,
               fit: BoxFit.cover,
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     pizza.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -138,7 +144,7 @@ class PizzaCard extends StatelessWidget {
                     pizza.description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
@@ -147,7 +153,7 @@ class PizzaCard extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Container(
               width: 43,
               height: 43,
@@ -155,22 +161,24 @@ class PizzaCard extends StatelessWidget {
                 color: Colors.black.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: IconButton(
-                icon: Icon(
-                  Icons.shopping_cart_outlined,
-                  color: Colors.white,
-                  size: 25,
-                ),
-                onPressed: () {
-                  context.read<CartCubit>().addToCart(pizza);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("${pizza.name} aggiunta al carrello"),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                },
-              ),
+              child: canAdd
+                  ? IconButton(
+                      icon: const Icon(
+                        Icons.shopping_cart_outlined,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                      onPressed: () {
+                        cartCubit.addToCart(pizza, restaurantId);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("${pizza.name} aggiunta al carrello"),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      },
+                    )
+                  : const SizedBox.shrink(),
             ),
           ],
         ),
