@@ -126,7 +126,7 @@ class GearPizzaDirectusApiService {
     final imageId = imageUploadRes.data['data']['id'];
     print("PRE CREATE ORDER");
     // STEP 3: Crea ordine
-    final orderRes = await _dio.post(
+    /*final orderRes = await _dio.post(
       '/items/orders',
       data: {
         'status': 'pending',
@@ -135,6 +135,25 @@ class GearPizzaDirectusApiService {
         'address': address,
         'helping_image': imageId,
         //'pizzas': cartItems.map((item) => item.pizza.id).toList(),
+      },
+    );*/
+    // STEP 3: Crea ordine con associazione pizze
+    final orderRes = await _dio.post(
+      '/items/orders',
+      data: {
+        'status': 'pending',
+        'restaurant': restaurantId,
+        'customer': customerId,
+        'address': address,
+        'helping_image': imageId,
+        'pizzas': {
+          'create': cartItems.map((item) {
+            return {
+              'orders_id': '+',
+              'pizzas_id': {'id': item.pizza.id},
+            };
+          }).toList(),
+        },
       },
     );
 
