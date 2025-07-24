@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart'; // Importa il pacchetto Lottie
 import 'package:gearpizza/features/orders/models/order.dart';
-import 'package:go_router/go_router.dart';
 
 class OrderCard extends StatelessWidget {
   final Order order;
   const OrderCard({super.key, required this.order});
 
-  // Funzione per ottenere il colore della chip in base allo stato
-  Color _getStatusColor(String status) {
+  // Funzione per ottenere l'animazione Lottie in base allo stato
+  String _getLottieAnimation(String status) {
     switch (status) {
       case 'pending':
-        return Colors.orange; // Arancione per pending
+        return 'assets/animations/pending.json'; // Inserisci il percorso della tua animazione Lottie
       case 'preparing':
-        return Colors.yellow; // Giallo per preparing
+        return 'assets/animations/preparing.json'; // Animazione per preparing
       case 'delivered':
-        return Colors.green; // Verde per delivered
+        return 'assets/animations/delivered.json'; // Animazione per delivered
       case 'completed':
-        return Colors.blue; // Blu per completed
+        return 'assets/animations/completed.json'; // Animazione per completed
       default:
-        return Colors.grey; // Grigio di default
+        return 'assets/animations/pending.json'; // Animazione di default
     }
   }
 
@@ -30,13 +30,6 @@ class OrderCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -70,22 +63,33 @@ class OrderCard extends StatelessWidget {
                   // Numero pizze
                   Text(
                     'N° Pizze: ${order.pizzas.length}',
-                    style: const TextStyle(fontSize: 14),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
-            SizedBox(width: 20),
-            // Chip per lo stato a destra
+
+            // Lottie per lo stato a destra
             Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Chip(
-                padding: EdgeInsets.all(1),
-                label: Text(
-                  order.status,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                backgroundColor: _getStatusColor(order.status),
+              padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: 70,
+                    height: 70,
+                    child: Lottie.asset(
+                      _getLottieAnimation(order.status),
+                      repeat: order.status == "completed" ? false : true,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                  Spacer(),
+                  Text(order.status, style: const TextStyle(fontSize: 14)),
+                ],
               ),
             ),
           ],

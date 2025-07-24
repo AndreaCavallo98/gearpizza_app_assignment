@@ -29,8 +29,8 @@ class RestaurantCard extends StatelessWidget {
                 child: ClipPath(
                   clipper: CustomCardClipper(),
                   child: Image.network(
-                    //"${restaurant.coverImageUrl}?access_token=${TokenStorage.accessToken}",
-                    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/a5/9a/e0/getlstd-property-photo.jpg?w=500&h=-1&s=1",
+                    "${restaurant.coverImageUrl}?access_token=${TokenStorage.accessToken}",
+                    //"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/a5/9a/e0/getlstd-property-photo.jpg?w=500&h=-1&s=1",
                     fit: BoxFit.cover,
                   ),
                 ),

@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gearpizza/features/orders/logic/orders_cubit.dart';
@@ -13,13 +14,16 @@ class OrdersPage extends StatefulWidget {
 }
 
 class _OrdersPageState extends State<OrdersPage> {
+  // Aggiungi il controller per il scroll
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: Color(0xFFF5F5F5),
-        title: Text(
+        backgroundColor: const Color(0xFFF5F5F5),
+        title: const Text(
           "Ordini",
           style: TextStyle(
             color: Colors.black,
@@ -49,13 +53,24 @@ class _OrdersPageState extends State<OrdersPage> {
               if (state.orders.isEmpty) {
                 return const Center(child: Text("Non hai ordini"));
               }
-              return ListView.builder(
-                padding: const EdgeInsets.all(25),
-                itemCount: state.orders.length,
-                itemBuilder: (context, index) {
-                  final order = state.orders[index];
-                  return OrderCard(order: order);
-                },
+
+              return Scrollbar(
+                controller:
+                    _scrollController, // Imposta il controller per la scrollbar
+                thumbVisibility: true, // Mostra sempre la barra di scorrimento
+                child: ListView.builder(
+                  controller:
+                      _scrollController, // Associa il controller alla lista
+                  padding: const EdgeInsets.all(25),
+                  itemCount: state.orders.length,
+                  itemBuilder: (context, index) {
+                    final order = state.orders[index];
+                    return FadeInUp(
+                      delay: Duration(milliseconds: (index + 1) * 200),
+                      child: OrderCard(order: order),
+                    );
+                  },
+                ),
               );
             }
 

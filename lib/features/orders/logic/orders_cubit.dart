@@ -21,7 +21,7 @@ class OrdersCubit extends Cubit<OrdersState> {
         return;
       }
       final items = await service.getCustomerOrders(customerId);
-      emit(OrdersLoaded(items));
+      emit(OrdersLoaded(items.reversed.toList()));
     } on GearPizzaAppException catch (e) {
       emit(OrdersError(e.message));
     } catch (e) {

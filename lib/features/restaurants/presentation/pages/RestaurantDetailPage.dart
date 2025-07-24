@@ -65,8 +65,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               children: [
                 Positioned.fill(
                   child: Image.network(
-                    //'https://gearpizza.revod.services/assets/10205b8c-33ae-4c42-9f77-9f25b811e787?access_token=${TokenStorage.accessToken}',
-                    "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/a5/9a/e0/getlstd-property-photo.jpg?w=500&h=-1&s=1",
+                    'https://gearpizza.revod.services/assets/10205b8c-33ae-4c42-9f77-9f25b811e787?access_token=${TokenStorage.accessToken}',
+                    //"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/08/a5/9a/e0/getlstd-property-photo.jpg?w=500&h=-1&s=1",
                     fit: BoxFit.cover,
                   ),
                 ),
