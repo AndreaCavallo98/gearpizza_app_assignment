@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:gearpizza/core/network/dio_client.dart';
 import 'package:gearpizza/features/cart/models/cart_item.dart';
+import 'package:gearpizza/features/orders/models/order.dart';
 import 'package:gearpizza/features/restaurants/models/allergen.dart';
 import 'package:gearpizza/features/restaurants/models/pizza.dart';
 import 'package:gearpizza/features/restaurants/models/restaurant.dart';
@@ -18,6 +19,21 @@ class GearPizzaDirectusApiService {
 
     final List<dynamic> rawData = response.data['data'];
     return rawData.map((json) => Restaurant.fromJson(json)).toList();
+  }
+
+  Future<List<Order>> getCustomerOrders(int customerId) async {
+    final response = await _dio.get(
+      '/items/orders',
+      queryParameters: {
+        'filter': {
+          'customer': {'_eq': customerId},
+        },
+        'fields': 'id,status,address,helping_image,pizzas.pizzas_id.id',
+      },
+    );
+
+    final List<dynamic> rawData = response.data['data'];
+    return rawData.map((json) => Order.fromJson(json)).toList();
   }
 
   Future<List<Pizza>> getPizzas(int restaurantId, List<int> allergens) async {
@@ -125,6 +141,7 @@ class GearPizzaDirectusApiService {
     final imageUploadRes = await _dio.post('/files', data: formData);
     final imageId = imageUploadRes.data['data']['id'];
     print("PRE CREATE ORDER");
+    // => PERCHE' NON ANDAVA COSI
     // STEP 3: Crea ordine
     /*final orderRes = await _dio.post(
       '/items/orders',
@@ -158,6 +175,7 @@ class GearPizzaDirectusApiService {
     );
 
     return {
+      'customerId': customerId,
       'orderId': orderRes.data['data']['id'],
       'customerAlreadyExists': customerAlreadyExists,
     };

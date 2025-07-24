@@ -7,10 +7,11 @@ import 'package:gearpizza/features/cart/logic/cubit/cart_cubit.dart';
 import 'package:gearpizza/features/cart/logic/cubit/customer_form_cubit.dart';
 import 'package:gearpizza/features/cart/presentation/pages/CartPage.dart';
 import 'package:gearpizza/features/cart/presentation/pages/CheckOutPage.dart';
+import 'package:gearpizza/features/orders/logic/orders_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/pizzas_cubit.dart';
 import 'package:gearpizza/features/restaurants/logic/cubit/restaurants_cubit.dart';
 import 'package:gearpizza/features/restaurants/models/restaurant.dart';
-import 'package:gearpizza/features/restaurants/presentation/pages/OrdersPage.dart';
+import 'package:gearpizza/features/orders/presentation/pages/OrdersPage.dart';
 import 'package:gearpizza/features/restaurants/presentation/pages/RestaurantDetailPage.dart';
 import 'package:gearpizza/features/restaurants/presentation/pages/RestaurantPage.dart';
 import 'package:gearpizza/main.dart';
@@ -35,7 +36,7 @@ final GoRouter appRouter = GoRouter(
           path: '/orders',
           name: 'orders',
           builder: (context, state) => BlocProvider(
-            create: (_) => RestaurantsCubit(sl<GearPizzaDirectusApiService>()),
+            create: (_) => OrdersCubit(sl<GearPizzaDirectusApiService>()),
             child: const OrdersPage(title: "Orders"),
           ),
         ),

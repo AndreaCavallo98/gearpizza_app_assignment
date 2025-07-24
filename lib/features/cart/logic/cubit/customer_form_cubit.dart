@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:gearpizza/core/network/gearpizza_directus_api_service.dart';
 import 'package:gearpizza/features/cart/logic/cubit/cart_cubit.dart';
 import 'package:gearpizza/features/cart/logic/cubit/customer_form_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomerFormCubit extends Cubit<CustomerFormState> {
   final GearPizzaDirectusApiService service;
@@ -36,6 +37,11 @@ class CustomerFormCubit extends Cubit<CustomerFormState> {
           success: true,
           customerAlreadyExists: result['customerAlreadyExists'],
         ),
+      );
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(
+        'customer_id',
+        int.parse(result['customerId'].toString()),
       );
       cartCubit.clearCart();
     } on DioException catch (e) {
